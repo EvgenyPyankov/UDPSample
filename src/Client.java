@@ -3,14 +3,14 @@ import java.net.*;
 
 public class Client extends Thread{
     static int port = 8888;
+    static DatagramSocket clientSocket;
     public static void main(String[] args){
         try {
-            DatagramSocket clientSocket = new DatagramSocket();
+            clientSocket = new DatagramSocket();
             clientSocket.setSoTimeout(100);
-            while (true) {
                 BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
                 InetAddress IPAdress = InetAddress.getByName("localhost");
-                byte[] sendData = new byte[1024];
+                byte[] sendData;
                 byte[] receiveData = new byte[1024];
                 String sentence = inFromUser.readLine();
                 sendData = sentence.getBytes();
@@ -20,11 +20,12 @@ public class Client extends Thread{
                 clientSocket.receive(receivePacket);
                 String receivedSentence = new String(receivePacket.getData());
                 System.out.println("RECEIVED: " + receivedSentence);
-            }
         }
-        catch (Exception e){
+        catch (Exception e) {
             System.out.println("Time out!!");
         }
-        //clientSocket.close();
+        finally {
+            clientSocket.close();
+        }
     }
 }
